@@ -16,7 +16,7 @@
 
 	"permissions": [
 		"activeTab",
-		// these enable "executeScript" on pages
+		// these enable "executeScript" on arbitrary websites
 		"tabs", "http://*/*", "https://*/*"
 	]
 }
