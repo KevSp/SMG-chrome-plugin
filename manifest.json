@@ -11,12 +11,19 @@
 	},
 
 	"background": {
-		"scripts": ["src/background.js"]
+		"scripts": [
+			"src/background.js"
+		]
 	},
+
+	"content_scripts": [{
+        "matches": ["http://*/*", "https://*/*"],
+        "js": ["lib/jquery.min.js", "lib/smg-plugin-common/smg_web.js", "src/foreground.js"]
+    }],
 
 	"permissions": [
 		"activeTab",
-		// these enable "executeScript" on arbitrary websites
-		"tabs", "http://*/*", "https://*/*"
+		"tabs",
+		"http://*/*", "https://*/*"
 	]
 }

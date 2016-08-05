@@ -63,5 +63,7 @@ document.addEventListener("DOMContentLoaded", function () {
         renderStatus("On: " + url);
     });
 
+    console.log(smg);
+
     executeScriptOnCurrentTab("alert('hi');");
 });
