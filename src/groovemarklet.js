@@ -13,7 +13,7 @@ musicRetrievalPort.onMessage.addListener(function (message) {
 	// even if the answer is null/undefined so check that here
 	if (message !== null && message !== undefined) {
 		console.log("received message from background.js", message);
-		$status.innerHTML = "You're listening to music on " + message.music_player_name + " :)";
+		$status.innerHTML = "You're listening to music on " + "<span class='music_player_name'>" + message.music_player_name + "</span>";
 		$currently_playing.innerHTML = message.song;
 	} else {
 		$status.innerHTML = "Currently not connected to a webpage";
