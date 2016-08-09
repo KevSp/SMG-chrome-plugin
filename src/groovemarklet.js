@@ -1,69 +1,22 @@
-/**
- * Get the current URL.
- *
- * @param {function(string)} callback - called when the URL of the current tab
- *   is found.
- */
-function getCurrentTabUrl(callback) {
-  // Query filter to be passed to chrome.tabs.query - see
-  // https://developer.chrome.com/extensions/tabs#method-query
-  var queryInfo = {
-    active: true,
-    currentWindow: true
-  };
+// $NAME are NOT jQuery tags, just normal HTMLElements
+var $status            = document.querySelector(".status");
+var $currently_playing = document.querySelector(".currently-playing");
 
-  chrome.tabs.query(queryInfo, function(tabs) {
-    // chrome.tabs.query invokes the callback with a list of tabs that match the
-    // query. When the popup is opened, there is certainly a window and at least
-    // one tab, so we can safely assume that |tabs| is a non-empty array.
-    // A window can only have one active tab at a time, so the array consists of
-    // exactly one tab.
-    var tab = tabs[0];
+// this port is for asking background.js (which asks foreground.js) what song is currently playing
+var musicRetrievalPort = chrome.runtime.connect({name: "smg-music-display"});
+setInterval(function () {
+	musicRetrievalPort.postMessage({action: "send-last-song-playing"});
+}, 500);
 
-    // A tab is a plain object that provides information about the tab.
-    // See https://developer.chrome.com/extensions/tabs#type-Tab
-    var url = tab.url;
-
-    // tab.url is only available if the "activeTab" permission is declared.
-    // If you want to see the URL of other tabs (e.g. after removing active:true
-    // from |queryInfo|), then the "tabs" permission is required to see their
-    // "url" properties.
-    console.assert(typeof url == 'string', 'tab.url should be a string');
-
-    callback(url);
-  });
-}
-
-function executeScriptOnCurrentTab(script) {
-  var queryInfo = {
-    active: true,
-    currentWindow: true
-  };
-
-  chrome.tabs.query(queryInfo, function(tab) {
-    chrome.tabs.executeScript(tab.id, {
-      code: script
-    });
-  });
-}
-
-function setTitle(newTitle) {
-    var script = "document.title = '" + newTitle + "'";
-    executeScriptOnCurrentTab(script);
-}
-
-function renderStatus(statusText) {
-  document.getElementById('status').textContent = statusText;
-}
-
-setTitle("Hello world!");
-
-document.addEventListener("DOMContentLoaded", function () {
-    getCurrentTabUrl(function(url) {
-        renderStatus("On: " + url);
-    });
-
-    console.log(smg);
-
-    executeScriptOnCurrentTab("alert('hi');");
+musicRetrievalPort.onMessage.addListener(function (message) {
+	// error checking is mandatory, background.js always sends a response, 
+	// even if the answer is null/undefined so check that here
+	if (message !== null && message !== undefined) {
+		console.log("received message from background.js", message);
+		$status.innerHTML = "You're listening to music on " + message.music_player_name + " :)";
+		$currently_playing.innerHTML = message.song;
+	} else {
+		$status.innerHTML = "Currently not connected to a webpage";
+		$currently_playing = "No song playing";
+	}
 });

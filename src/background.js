@@ -1,44 +1,91 @@
-function executeScriptOnCurrentTab(script) {
-    var queryInfo = {
-        active: true,
-        currentWindow: true
-    };
+// short diagram of all communications and ports
+// name                      from               to
+// =====================================================
+// "smg-music-display"       groovemarklet.js   background.js
+// -----------------------------------------------------
+// action                    response
+// "send-last-song-playing"  lastSongPlaying
+//
+//
+// name                      from               to
+// =====================================================
+// "smg-music-receive"       background.js      foreground.js
+// -----------------------------------------------------
+// action                    response
+// "get_current_song"        smg.get_identifier(...)(document)
+//
 
-    chrome.tabs.query(queryInfo, function(tab) {
-        chrome.tabs.executeScript(tab.id, {
-            code: script
-        });
+// this variable points to the last message received from the content script
+var lastSongPlaying = undefined;
+
+function executeScriptOnTab(script, tabId) {
+    chrome.tabs.executeScript(tabId, {
+        code: script
     });
 }
 
-function setTitle(newTitle) {
+function setTitle(newTitle, tabId) {
     var script = "document.title = '" + newTitle + "'";
-    executeScriptOnCurrentTab(script);
+    executeScriptOnTab(script, tabId);
 }
 
+function getActiveTab(callback) {
+    return chrome.tabs.query({currentWindow: true, active: true}, function(tabs){
+        // I'm not sure if it's possible for the tabs array to be empty, so I added this inline check just to be sure
+        callback(tabs.length >= 1 ? tabs[0] : undefined);
+    });
+}
+
+// port to communicate with the popup
+chrome.runtime.onConnect.addListener(function (port) {
+    console.log("connected to new port :)");
+    if (port.name === "smg-music-display") {
+        console.log("port is smg-music-display");
+        port.onMessage.addListener(function (message) {
+            console.log("Sending last song playing", lastSongPlaying)
+            if (message.action === "send-last-song-playing") {
+                port.postMessage(lastSongPlaying);
+            }
+        });
+    }
+});
+
 function on_siteSupported(tab) {
-    var port = chrome.tabs.connect(tab.id, {name: "smg-music"});
+    // musicRetrievalPort is to communicate with the content script `foreground.js`, which retrieves
+    // music from the web-page
+    var musicRetrievalPort = chrome.tabs.connect(tab.id, {name: "smg-music-retrieve"});
 
     function nag_for_songs() {
-        console.log("get_current_song");
-        port.postMessage({action: "get_current_song"});
+        musicRetrievalPort.postMessage({action: "get_current_song"});
     }
 
     var interval_id = setInterval(nag_for_songs, 500);
 
-    port.onDisconnect.addListener(function () {
+    musicRetrievalPort.onDisconnect.addListener(function () {
         console.log("Disconnected port :(");
         clearInterval(interval_id, nag_for_songs);
     });
 
-    port.onMessage.addListener(function (answer) {
+    musicRetrievalPort.onMessage.addListener(function (answer) {
         if (answer === undefined) {
             // uncomment for debugging
             // console.log(chrome.runtime.lastError);
             return;
         }
-        console.log(answer);
-        setTitle(answer.send_this_over_channel);
+
+        if (answer.song) {
+            // SMG should detect the active tab only
+            // when trying to communicate with the popup script (groovemarklet.js), we need to be able to send
+            // what song is currently playing (if any). If multiple tabs are open with different music players
+            // e.g. tab1 = twitter, tab2 = di.fm, tab3 = youtube
+            // SMG will pick the one that is currently focused.
+            getActiveTab(function (activeTab) {
+                if (activeTab && tab.id === activeTab.id) {
+                    setTitle(answer.send_this_over_channel, tab.id);
+                    lastSongPlaying = answer;
+                }
+            });
+        }
     });
 }
 
