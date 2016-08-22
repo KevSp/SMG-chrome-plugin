@@ -7,6 +7,7 @@
             body {
                 font-family: "Segoe UI", "Lucida Grande", Tahoma, sans-serif;
                 font-size: 100%;
+                margin: 0;
             }
             #status {
                 /* avoid an excessively wide status text */
@@ -18,16 +19,39 @@
             .music_player_name {
                 font-weight: bold;
             }
+            a {
+                color: #1BA7F2;
+                text-decoration: none;
+            }
+            .container {
+                margin: 8px;
+            }
+            footer p {
+                font-size: .8em;
+            }
+            hr {
+                border-bottom: none;
+                border-color: #cccccc;
+            }
+            .smg-icon {
+                background-image: url("../resources/icon-60.png");
+                width: 64px;
+                height: 64px;
+            }
         </style>
     </head>
     <body>
-        <h1>Smg for web plugin</h1>
-        <p>
-            <span class="status">Currently not connected to a webpage</span><br>
-            <span class="currently-playing">No song playing</span>
-        </p>
-        <p><a href="https://martijnbrekelmans.com/SMG/index.php">Official site</a><br>
-        Contact us at smg@martijnbrekelmans.com for feedback and questions</p>
+        <div class="container">
+            <p>
+                <span class="status">Not connected to a webpage</span><br>
+                <span class="currently-playing"></span>
+            </p>
+        </div>
+        <hr>
+        <footer class="container">
+            <p><a href="https://martijnbrekelmans.com/SMG/index.php">Official site</a></p>
+            <p>Contact us at smg@martijnbrekelmans.com for feedback and questions</p>
+        </footer>
         <script src="./groovemarklet.js"></script>
     </body>
 </html>

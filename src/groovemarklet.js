@@ -16,7 +16,7 @@ musicRetrievalPort.onMessage.addListener(function (message) {
 		$status.innerHTML = "You're listening to music on " + "<span class='music_player_name'>" + message.music_player_name + "</span>";
 		$currently_playing.innerHTML = message.song;
 	} else {
-		$status.innerHTML = "Currently not connected to a webpage";
+		$status.innerHTML = "Not connected to a webpage";
 		$currently_playing = "No song playing";
 	}
 });
