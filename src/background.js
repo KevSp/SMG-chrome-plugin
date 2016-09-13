@@ -38,11 +38,8 @@ function getActiveTab(callback) {
 
 // port to communicate with the popup
 chrome.runtime.onConnect.addListener(function (port) {
-    console.log("connected to new port :)");
     if (port.name === "smg-music-display") {
-        console.log("port is smg-music-display");
         port.onMessage.addListener(function (message) {
-            console.log("Sending last song playing", lastSongPlaying)
             if (message.action === "send-last-song-playing") {
                 port.postMessage(lastSongPlaying);
             }
@@ -62,7 +59,6 @@ function on_siteSupported(tab) {
     var interval_id = setInterval(nag_for_songs, 500);
 
     musicRetrievalPort.onDisconnect.addListener(function () {
-        console.log("Disconnected port :(");
         clearInterval(interval_id, nag_for_songs);
     });
 
