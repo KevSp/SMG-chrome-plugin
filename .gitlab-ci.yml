@@ -2,5 +2,10 @@ before_script:
   - apt-get update -qq && apt-get install -y -qq git
   - git submodules foreach git pull
 
-build:
-  - zip -r ./ smg-music-display.crx
+stages:
+  - build
+
+crxify:
+  stage: build
+  script: 
+    - zip -r ./ smg-music-display.crx
