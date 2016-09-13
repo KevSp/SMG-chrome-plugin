@@ -25,7 +25,7 @@ function executeScriptOnTab(script, tabId) {
 }
 
 function setTitle(newTitle, tabId) {
-    var script = "document.title = '" + newTitle + "'";
+    var script = "document.title = '" + newTitle.replace(/\n/g, "") + "'";
     executeScriptOnTab(script, tabId);
 }
 
