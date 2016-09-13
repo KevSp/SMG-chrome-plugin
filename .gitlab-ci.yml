@@ -7,6 +7,9 @@ stages:
 
 crxify:
   stage: build
+  artifacts: 
+    paths:
+    - smg-music-display.crx
   script:
     # the crazy stuff is there to ignore the .git folder, be wary, it is /not/ regex!
     - zip smg-music-display.zip -r ./*[!.git]
