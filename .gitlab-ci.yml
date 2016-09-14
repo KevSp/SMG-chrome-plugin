@@ -5,12 +5,13 @@ before_script:
 stages:
   - build
 
-crxify:
+deploy_extension:
   stage: build
   artifacts: 
     paths:
     - smg-music-display.crx
+    - smg-music-display.zip
   script:
     # the crazy stuff is there to ignore the .git folder, be wary, it is /not/ regex!
     - zip smg-music-display.zip -r ./*[!.git]
-    - mv smg-music-display.zip smg-music-display.crx
+    - cp smg-music-display.zip smg-music-display.crx
