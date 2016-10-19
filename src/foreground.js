@@ -31,7 +31,6 @@ chrome.runtime.onMessage.addListener(function(message, sender, sendResponse) {
 		// if supported is true, the background script will open a connection
 		// resulting in the code in chrome.runtime.onConnect.addListener
 		// to run
-		console.log("answer for site", window.location.href, "is", supported);
 		sendResponse({
 			supported: supported
 		});

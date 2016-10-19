@@ -96,7 +96,7 @@ chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
             {action: "is_site_supported"},
             function(answer) {
                 if (answer === undefined) {
-                    console.log(chrome.runtime.lastError);
+                    // console.log(chrome.runtime.lastError);
                 } else {
                     if (answer.supported) {
                         on_siteSupported(tab);
