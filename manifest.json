@@ -3,7 +3,7 @@
 
 	"name": "SMG music display - Chrome",
 	"description": "An extension for SMG to show music of browser music players",
-	"version": "1.1",
+	"version": "1.2",
 
 	"browser_action": {
 		"default_icon": "resources/icon-60.png",
