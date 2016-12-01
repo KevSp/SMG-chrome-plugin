@@ -1,9 +1,25 @@
 before_script:
-  - apt-get update -qq && apt-get install -y -qq git zip
+  - apt-get update -qq && apt-get install -y -qq git zip nodejs nodejs-legacy npm curl
+  - npm install -g jpm
+  - git submodule sync/update
   - git submodule update --init --recursive
   
 stages:
   - build
+
+build_firefox:
+  stage: build
+  artifacts:
+    paths:
+      - smg-music-display.crx
+      - build/updateManifest.json
+  script:
+    # fetch old update manifest
+    - mkdir -p build
+    - curl https://martijnbrekelmans.com/SMG/smg_web_plugin/updateManifest.json > build/oldUpdateManifest.json
+    # the generateUpdateManifest script needs to be run from its folder, otherwise it will fail
+    - cd scripts
+    - node generateUpdateManifest.js smg@martijnbrekelmans.com https://martijnbrekelmans.com/SMG/smg_web_plugin/
 
 deploy_extension:
   stage: build
