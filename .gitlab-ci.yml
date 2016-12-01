@@ -1,7 +1,7 @@
 before_script:
   - apt-get update -qq && apt-get install -y -qq git zip nodejs nodejs-legacy npm curl
   - npm install -g jpm
-  - git submodule sync/update
+  - git submodule sync --recursive
   - git submodule update --init --recursive
   
 stages:
