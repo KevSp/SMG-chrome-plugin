@@ -1,7 +1,7 @@
 {
 	"manifest_version": 2,
 
-	"name": "SMG music display - Chrome",
+	"name": "SMG music display",
 	"description": "An extension for SMG to show music of browser music players",
 	"version": "1.8",
 
