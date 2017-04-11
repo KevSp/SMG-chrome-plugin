@@ -25,7 +25,9 @@ function executeScriptOnTab(script, tabId) {
 }
 
 function setTitle(newTitle, tabId) {
-    var script = "document.title = '" + newTitle.replace(/\n/g, "") + "'";
+    // if a song's name contains an apostrophe
+    // we need to escape it. Because it will be eval'd.
+    var script = "document.title = '" + newTitle.replace(/\n/g, "").replace(/'/g, "\\'") + "'";
     executeScriptOnTab(script, tabId);
 }
 
@@ -102,7 +104,7 @@ chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
                         on_siteSupported(tab);
                     } else {
                         on_siteNotSupported();
-                    }                   
+                    }
                 }
             }
         );
