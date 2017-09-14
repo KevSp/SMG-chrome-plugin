@@ -1,1 +1,1 @@
-This is the Chrome plugin for SMG, it is intended to replace the Groovemarklet in the long run. Right now, it is in the early phase of development.
+This is the Chrome plugin for SMG. It communicates with SMG via websockets on port 8765.
